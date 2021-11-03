@@ -24,15 +24,6 @@ namespace CSGO_Simple_Glow
             {
                 Memory.ProcessHandle = Memory.OpenProcess(0x0008 | 0x0010 | 0x0020, false, csgoproc[0].Id);
                 Console.WriteLine($"Opened Process csgo.exe ({csgoproc[0].Id})");
-                #region INSECURE Region
-                if (!Memory.GetCommandLine(csgoproc[0]).Contains("-insecure"))
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("You have launched CSGO without the -insecure argument to disable VAC, please launch csgo with the -insecure argument. More info here: https://guidedhacking.com/threads/how-to-bypass-vac-valve-anti-cheat-info.8125/");
-                    Console.ReadLine();
-                    Process.GetCurrentProcess().Kill();
-                }
-                #endregion
             }
             else
             {
@@ -47,14 +38,12 @@ namespace CSGO_Simple_Glow
                     }
                 }
             }
-
             //Get the base addy for client.dll & engine.dll inside our csgo.exe
             int clientdll = GetModuleBaseAddress(csgoproc[0], "client.dll");
             int enginedll = GetModuleBaseAddress(csgoproc[0], "engine.dll");
 
             //Our general settings
             GlowSettingsStruct glowSettingsStruct = new GlowSettingsStruct() { renderOccluded = true, renderUnoccluded = false };
-
             //Get our local player
             while (true)
             {
@@ -78,32 +67,19 @@ namespace CSGO_Simple_Glow
                     //The current entity
                     int entity = Memory.ReadMemory<int>(clientdll + offsets.signatures.dwEntityList + i * 0x10);
                     bool bDormant = Memory.ReadMemory<bool>(entity + offsets.signatures.m_bDormant);
-
                     if (!bDormant)
                     {
                         int glowIndex = Memory.ReadMemory<int>(entity + offsets.netvars.m_iGlowIndex);
                         int entityTeam = Memory.ReadMemory<int>(entity + offsets.netvars.m_iTeamNum);
                         if (myTeam == entityTeam)
                         {
-                            /*GlowColorStruct TeamGlow = new GlowColorStruct() { red = 0, green = 1, blue = 0, alpha = 0.0f };
-                            Memory.WriteMemory<GlowColorStruct>(glowObject + (glowIndex * 0x38) + 0x8, TeamGlow);
-
-                            rgba clrRender_t = new rgba
-                            {
-                                //*255 idea from: https://stackoverflow.com/a/46575472/12897035
-                                r = (byte)Math.Round(TeamGlow.red * 255.0),
-                                g = (byte)Math.Round(TeamGlow.green * 255.0),
-                                b = (byte)Math.Round(TeamGlow.blue * 255.0),
-                                a = (byte)Math.Round(TeamGlow.alpha * 255.0)
-                            };
-                            Memory.WriteMemory<GlowColorStruct>(entity + offsets.netvars.m_clrRender, clrRender_t);*/
+                            //
                         }
                         else
                         {
                             GlowColorStruct EnemyGlow = new GlowColorStruct() { red = 1, green = 0, blue = 0, alpha = 0.35f };
-
                             if (Memory.ReadMemory<bool>(entity + offsets.netvars.m_bIsDefusing))
-                                EnemyGlow = new GlowColorStruct() { /*red = 255, green = 255, blue = 255, alpha = 0.0f */};
+                                EnemyGlow = new GlowColorStruct() { };
                             else
                                 Memory.WriteMemory<GlowColorStruct>(glowObject + (glowIndex * 0x38) + 0x8, EnemyGlow);
 
@@ -115,20 +91,15 @@ namespace CSGO_Simple_Glow
                                 a = (byte)Math.Round(EnemyGlow.alpha * 255.0)
                             };
                             Memory.WriteMemory<GlowColorStruct>(entity + offsets.netvars.m_clrRender, clrRender_t);
-
                             //Our teammates are shown on map so we only have to write the radar to our enemies. (Basically this: https://youtu.be/5VOkRJk1GVg)
                             Memory.WriteMemory<bool>(entity + offsets.netvars.m_bSpotted, true);
                         }
-
                         Memory.WriteMemory<GlowSettingsStruct>(glowObject + ((glowIndex * 0x38) + 0x28), glowSettingsStruct);
                     }
                 }
                 Thread.Sleep(1);//Change this if ur cpu can't handle it :pepeclown:
             }
         }
-
-
-
 
         public struct GlowColorStruct
         {
@@ -146,19 +117,16 @@ namespace CSGO_Simple_Glow
             public byte a;
         }
 
-
-
         public struct GlowSettingsStruct
         {
             public bool renderOccluded { get; set; }
             public bool renderUnoccluded { get; set; }
         }
 
-
-
         public static int GetModuleBaseAddress(Process process, string moduleName)
         {
             return (int)process.Modules.Cast<ProcessModule>().SingleOrDefault(m => string.Equals(m.ModuleName, moduleName, StringComparison.OrdinalIgnoreCase)).BaseAddress;
         }
+
     }
 }
