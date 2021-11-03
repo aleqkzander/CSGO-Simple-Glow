@@ -9,21 +9,23 @@ namespace CSGO_Simple_Glow
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            Console.Title = "CSGO External Glow Hack v1";
-            Console.WriteLine("Hello Player!");
+            //Kredits to Kye#5000
+            Console.Title = $"CS:GO Simple Glow v1 - {Utils.RandomString(5)}";
+            //Thread.CurrentThread.Priority = ThreadPriority.Highest;
+            //Download our offsets from hazedumper
             Hazedumper.Root offsets = JsonNet.Deserialize<Hazedumper.Root>(new WebClient().DownloadString("https://raw.githubusercontent.com/frk1/hazedumper/master/csgo.min.json"));
             TimeSpan updatedtime = DateTime.Now - DateTimeOffset.FromUnixTimeSeconds(offsets.timestamp).DateTime.ToLocalTime();
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Fetched offsets from hazedumper, last updated {Utils.GetReadableTimespan(updatedtime)} ago");
 
-            start: Process[] csgoproc = Process.GetProcessesByName("csgo");
-
+        start: Process[] csgoproc = Process.GetProcessesByName("csgo");
             if (csgoproc.Length > 0)
             {
                 Memory.ProcessHandle = Memory.OpenProcess(0x0008 | 0x0010 | 0x0020, false, csgoproc[0].Id);
                 Console.WriteLine($"Opened Process csgo.exe ({csgoproc[0].Id})");
-                #region -INSECURE REGION
-
+                #region ⠀
                 if (!Memory.GetCommandLine(csgoproc[0]).Contains("-insecure"))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -31,7 +33,6 @@ namespace CSGO_Simple_Glow
                     Console.ReadLine();
                     Process.GetCurrentProcess().Kill();
                 }
-
                 #endregion
             }
             else
@@ -85,8 +86,8 @@ namespace CSGO_Simple_Glow
                         int entityTeam = Memory.ReadMemory<int>(entity + offsets.netvars.m_iTeamNum);
                         if (myTeam == entityTeam)
                         {
-                            GlowColorStruct TeamGlow = new GlowColorStruct() { red = 0, green = 1, blue = 0, alpha = 1.7f };
-
+                            //GlowColorStruct TeamGlow = new GlowColorStruct() { red = 0, green = 1, blue = 0, alpha = 1.7f };
+                            GlowColorStruct TeamGlow = new GlowColorStruct() { red = 0, green = 1, blue = 0, alpha = 0.0f };
                             Memory.WriteMemory<GlowColorStruct>(glowObject + (glowIndex * 0x38) + 0x8, TeamGlow);
 
                             rgba clrRender_t = new rgba
@@ -101,10 +102,10 @@ namespace CSGO_Simple_Glow
                         }
                         else
                         {
-                            GlowColorStruct EnemyGlow = new GlowColorStruct() { red = 1, green = 0, blue = 0, alpha = 1.7f };
+                            GlowColorStruct EnemyGlow = new GlowColorStruct() { red = 1, green = 0, blue = 0, alpha = 0.35f };
 
                             if (Memory.ReadMemory<bool>(entity + offsets.netvars.m_bIsDefusing))
-                                EnemyGlow = new GlowColorStruct() { red = 255, green = 255, blue = 255, alpha = 1.7f };
+                                EnemyGlow = new GlowColorStruct() { red = 255, green = 255, blue = 255, alpha = 0.0f };
                             else
                                 Memory.WriteMemory<GlowColorStruct>(glowObject + (glowIndex * 0x38) + 0x8, EnemyGlow);
 
@@ -129,6 +130,8 @@ namespace CSGO_Simple_Glow
         }
 
 
+
+
         public struct GlowColorStruct
         {
             public float red { get; set; }//0x8
@@ -144,6 +147,8 @@ namespace CSGO_Simple_Glow
             public byte b;
             public byte a;
         }
+
+
 
         public struct GlowSettingsStruct
         {
