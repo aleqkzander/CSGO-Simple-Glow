@@ -19,13 +19,12 @@ namespace CSGO_Simple_Glow
             TimeSpan updatedtime = DateTime.Now - DateTimeOffset.FromUnixTimeSeconds(offsets.timestamp).DateTime.ToLocalTime();
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"Fetched offsets from hazedumper, last updated {Utils.GetReadableTimespan(updatedtime)} ago");
-
-        start: Process[] csgoproc = Process.GetProcessesByName("csgo");
+            start: Process[] csgoproc = Process.GetProcessesByName("csgo");
             if (csgoproc.Length > 0)
             {
                 Memory.ProcessHandle = Memory.OpenProcess(0x0008 | 0x0010 | 0x0020, false, csgoproc[0].Id);
                 Console.WriteLine($"Opened Process csgo.exe ({csgoproc[0].Id})");
-                #region ⠀
+                #region INSECURE Region
                 if (!Memory.GetCommandLine(csgoproc[0]).Contains("-insecure"))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -86,8 +85,7 @@ namespace CSGO_Simple_Glow
                         int entityTeam = Memory.ReadMemory<int>(entity + offsets.netvars.m_iTeamNum);
                         if (myTeam == entityTeam)
                         {
-                            //GlowColorStruct TeamGlow = new GlowColorStruct() { red = 0, green = 1, blue = 0, alpha = 1.7f };
-                            GlowColorStruct TeamGlow = new GlowColorStruct() { red = 0, green = 1, blue = 0, alpha = 0.0f };
+                            /*GlowColorStruct TeamGlow = new GlowColorStruct() { red = 0, green = 1, blue = 0, alpha = 0.0f };
                             Memory.WriteMemory<GlowColorStruct>(glowObject + (glowIndex * 0x38) + 0x8, TeamGlow);
 
                             rgba clrRender_t = new rgba
@@ -98,7 +96,7 @@ namespace CSGO_Simple_Glow
                                 b = (byte)Math.Round(TeamGlow.blue * 255.0),
                                 a = (byte)Math.Round(TeamGlow.alpha * 255.0)
                             };
-                            Memory.WriteMemory<GlowColorStruct>(entity + offsets.netvars.m_clrRender, clrRender_t);
+                            Memory.WriteMemory<GlowColorStruct>(entity + offsets.netvars.m_clrRender, clrRender_t);*/
                         }
                         else
                         {
