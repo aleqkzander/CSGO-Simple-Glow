@@ -103,7 +103,7 @@ namespace CSGO_Simple_Glow
                             GlowColorStruct EnemyGlow = new GlowColorStruct() { red = 1, green = 0, blue = 0, alpha = 0.35f };
 
                             if (Memory.ReadMemory<bool>(entity + offsets.netvars.m_bIsDefusing))
-                                EnemyGlow = new GlowColorStruct() { red = 255, green = 255, blue = 255, alpha = 0.0f };
+                                EnemyGlow = new GlowColorStruct() { /*red = 255, green = 255, blue = 255, alpha = 0.0f */};
                             else
                                 Memory.WriteMemory<GlowColorStruct>(glowObject + (glowIndex * 0x38) + 0x8, EnemyGlow);
 
