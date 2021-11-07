@@ -73,13 +73,25 @@ namespace CSGO_Simple_Glow
                         int entityTeam = Memory.ReadMemory<int>(entity + offsets.netvars.m_iTeamNum);
                         if (myTeam == entityTeam)
                         {
-                            //
+                            GlowColorStruct TeamGlow = new GlowColorStruct() { red = 0, green = 1, blue = 0, alpha = 0.1f };
+
+                            Memory.WriteMemory<GlowColorStruct>(glowObject + (glowIndex * 0x38) + 0x8, TeamGlow);
+
+                            rgba clrRender_t = new rgba
+                            {
+                                //*255 idea from: https://stackoverflow.com/a/46575472/12897035
+                                r = (byte)Math.Round(TeamGlow.red * 255.0),
+                                g = (byte)Math.Round(TeamGlow.green * 255.0),
+                                b = (byte)Math.Round(TeamGlow.blue * 255.0),
+                                a = (byte)Math.Round(TeamGlow.alpha * 255.0)
+                            };
+                            Memory.WriteMemory<GlowColorStruct>(entity + offsets.netvars.m_clrRender, clrRender_t);
                         }
                         else
                         {
                             GlowColorStruct EnemyGlow = new GlowColorStruct() { red = 1, green = 0, blue = 0, alpha = 0.35f };
                             if (Memory.ReadMemory<bool>(entity + offsets.netvars.m_bIsDefusing))
-                                EnemyGlow = new GlowColorStruct() { };
+                                EnemyGlow = new GlowColorStruct() { red = 255, green = 255, blue = 255, alpha = 0.1f };
                             else
                                 Memory.WriteMemory<GlowColorStruct>(glowObject + (glowIndex * 0x38) + 0x8, EnemyGlow);
 

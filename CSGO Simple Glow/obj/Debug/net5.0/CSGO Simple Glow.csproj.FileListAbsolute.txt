@@ -9,7 +9,6 @@ C:\Users\alexa\Documents\GitHub\CSGO-Simple-Glow\CSGO Simple Glow\bin\Debug\net5
 C:\Users\alexa\Documents\GitHub\CSGO-Simple-Glow\CSGO Simple Glow\bin\Debug\net5.0\System.CodeDom.dll
 C:\Users\alexa\Documents\GitHub\CSGO-Simple-Glow\CSGO Simple Glow\bin\Debug\net5.0\System.Management.dll
 C:\Users\alexa\Documents\GitHub\CSGO-Simple-Glow\CSGO Simple Glow\bin\Debug\net5.0\runtimes\win\lib\netcoreapp2.0\System.Management.dll
-C:\Users\alexa\Documents\GitHub\CSGO-Simple-Glow\CSGO Simple Glow\obj\Debug\net5.0\CSGO Simple Glow.csproj.AssemblyReference.cache
 C:\Users\alexa\Documents\GitHub\CSGO-Simple-Glow\CSGO Simple Glow\obj\Debug\net5.0\CSGO Simple Glow.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\alexa\Documents\GitHub\CSGO-Simple-Glow\CSGO Simple Glow\obj\Debug\net5.0\CSGO Simple Glow.AssemblyInfoInputs.cache
 C:\Users\alexa\Documents\GitHub\CSGO-Simple-Glow\CSGO Simple Glow\obj\Debug\net5.0\CSGO Simple Glow.AssemblyInfo.cs
